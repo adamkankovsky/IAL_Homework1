@@ -59,7 +59,7 @@ void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpre
     unsigned i = 0;
     while(!Stack_IsEmpty(stack) || elNow != '('){
         Stack_Top(stack, &elNow);
-         postfixExpression[i] = elNow;
+        postfixExpression[i] = elNow;
         i++;
         Stack_Pop(stack);
     }
@@ -135,9 +135,11 @@ void doOperation( Stack *stack, char c, char *postfixExpression, unsigned *postf
  * @returns Znakový řetězec obsahující výsledný postfixový výraz
  */
 char *infix2postfix( const char *infixExpression ) {
+    Stack *stack = (Stack *)malloc(MAX_LEN);
+    if(stack == NULL){
+        return NULL;
+    }
 
-    solved = FALSE; /* V případě řešení smažte tento řádek! */
-    return NULL; /* V případě řešení můžete smazat tento řádek. */
 }
 
 /* Konec c204.c */
