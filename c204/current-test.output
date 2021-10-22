@@ -4,91 +4,110 @@ C204 - Infix to Postfix Expression Conversion - Basic Tests
 [TEST01] Upper and lower case characters with plus operator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    a+B=
-Output postfix expression: 
+Output postfix expression: aB
 Conversion result match:   FAILED
 
 [TEST02] Digits with minus operator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    0-1=
-Output postfix expression: 
+Stack error: TOP
+Output postfix expression: 01=
 Conversion result match:   FAILED
 
 [TEST03] Mixed operands with multiplication operator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    a*0=
-Output postfix expression: 
+Stack error: TOP
+Output postfix expression: a0=
 Conversion result match:   FAILED
 
 [TEST04] Mixed operands with division operator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    B/1=
-Output postfix expression: 
+Stack error: TOP
+Output postfix expression: B1=
 Conversion result match:   FAILED
 
 [TEST05] Parentheses support
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    (a+b)=
-Output postfix expression: 
+Output postfix expression: ab(=
 Conversion result match:   FAILED
 
 [TEST06] Expression evaluation from the left to the right
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    a+b+c=
-Output postfix expression: 
+Stack error: TOP
+Stack error: TOP
+Output postfix expression: abc=
 Conversion result match:   FAILED
 
 [TEST07] Minus operator does not have higher priority than plus
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    a+b-c=
-Output postfix expression: 
+Stack error: TOP
+Stack error: TOP
+Output postfix expression: abc=
 Conversion result match:   FAILED
 
 [TEST08] Plus operator does not have higher priority than minus
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    A-B+C=
-Output postfix expression: 
+Stack error: TOP
+Stack error: TOP
+Output postfix expression: ABC=
 Conversion result match:   FAILED
 
 [TEST09] Division operator does not have higher priority than multiplication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    1*2/3=
-Output postfix expression: 
+Stack error: TOP
+Stack error: TOP
+Output postfix expression: 123=
 Conversion result match:   FAILED
 
 [TEST10] Multiplication operator does not have higher priority than division
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    a/B*C=
-Output postfix expression: 
+Stack error: TOP
+Stack error: TOP
+Output postfix expression: aBC=
 Conversion result match:   FAILED
 
 [TEST11] Multiplication operator has higher priority than plus
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    a*B+c=
-Output postfix expression: 
+Stack error: TOP
+Stack error: TOP
+Output postfix expression: aBc=
 Conversion result match:   FAILED
 
 [TEST12] Parentheses change operator priority
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    A+(B-c)=
-Output postfix expression: 
+Stack error: TOP
+Output postfix expression: ABc(=
 Conversion result match:   FAILED
 
 [TEST13] Parentheses change operator priority
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    A*(b/c)=
-Output postfix expression: 
+Stack error: TOP
+Output postfix expression: Abc(=
 Conversion result match:   FAILED
 
 [TEST14] Parentheses change operator priority
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    A*(b-C)=
-Output postfix expression: 
+Stack error: TOP
+Output postfix expression: AbC(=
 Conversion result match:   FAILED
 
 [TEST15] Complex expression conversion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Input infix expression:    (A*0+b)*((c*(1+D))-(e/(3*f+g)))=
-Output postfix expression: 
+Stack error: TOP
+Output postfix expression: A0bc1De3fg-((*=
 Conversion result match:   FAILED
 
 

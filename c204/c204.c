@@ -56,14 +56,13 @@ int solved;
  */
 void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpressionLength ) {
     char elNow;
-    unsigned i = 0;
-    while(!Stack_IsEmpty(stack) || elNow != '('){
-        Stack_Top(stack, &elNow);
-        postfixExpression[i] = elNow;
-        i++;
+    while(elNow != '('){
+        postfixExpression[*postfixExpressionLength] = elNow;
+        postfixExpressionLength++;
         Stack_Pop(stack);
+        Stack_Top(stack, &elNow);
     }
-    postfixExpressionLength = &i;
+    Stack_Pop(stack);
 }
 
 /**
@@ -83,7 +82,35 @@ void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpre
  * @param postfixExpressionLength Ukazatel na aktuální délku výsledného postfixového výrazu
  */
 void doOperation( Stack *stack, char c, char *postfixExpression, unsigned *postfixExpressionLength ) {
+    char last;
+    Stack_Top(stack, &last);
+    if(last == '('){
+        Stack_Push(stack, c);
+    }
+    if (last == '*' || last == '/'){
+        if (c == '+' || c == '-'){
+            Stack_Pop(stack);
+            postfixExpression[*postfixExpressionLength] = last;
+            postfixExpressionLength++;
+            doOperation(stack, c, postfixExpression, postfixExpressionLength);
+        }else{
+            Stack_Pop(stack);
+            postfixExpression[*postfixExpressionLength] = last;
+            postfixExpressionLength++;
+            Stack_Push(stack, c);
+        }
 
+    } else if(last == '+' || last == '-'){
+        if (c == '*' || c == '/') {
+            postfixExpression[*postfixExpressionLength] = c;
+            postfixExpressionLength++;
+        }else{
+            Stack_Pop(stack);
+            postfixExpression[*postfixExpressionLength] = last;
+            postfixExpressionLength++;
+            Stack_Push(stack, c);
+        }
+    }
 }
 
 /**
@@ -135,11 +162,39 @@ void doOperation( Stack *stack, char c, char *postfixExpression, unsigned *postf
  * @returns Znakový řetězec obsahující výsledný postfixový výraz
  */
 char *infix2postfix( const char *infixExpression ) {
-    Stack *stack = (Stack *)malloc(MAX_LEN);
+    Stack *stack = (Stack *)malloc(sizeof(Stack));
     if(stack == NULL){
         return NULL;
     }
-
+    char *postfixExpression = (char *)malloc(sizeof(char)*MAX_LEN);
+    if(postfixExpression == NULL){
+        free(stack);
+        return NULL;
+    }
+    int i = 0;
+    unsigned j = 0;
+    char item = infixExpression[i];
+    while(item != '=') {
+        if (item == '(') {
+            Stack_Push(stack, item);
+        } else if ((item >= '0' && item <= '9') || (item >= 'a' && item <= 'z') || (item >= 'A' && item <= 'Z')) {
+            postfixExpression[j] = item;
+            j++;
+        } else if (item == '+' || item == '-' || item == '*' || item == '/') {
+            doOperation(stack, item, postfixExpression, &j);
+        } else if (item == ')') {
+            untilLeftPar(stack, postfixExpression, &j);
+        }
+        item = infixExpression[++i];
+    }
+    while(!Stack_IsEmpty(stack)){
+        Stack_Top(stack, &postfixExpression[j]);
+        j++;
+        Stack_Pop(stack);
+    }
+    postfixExpression[j] = '=';
+    free(stack);
+    return postfixExpression;
 }
 
 /* Konec c204.c */
