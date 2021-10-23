@@ -55,15 +55,16 @@ int solved;
  * @param postfixExpressionLength Ukazatel na aktuální délku výsledného postfixového výrazu
  */
 void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpressionLength ) {
-    char elNow;
-    Stack_Top(stack, &elNow);
+    char elNow; //deklarace promenne pro element z vrcholu zasobniku
+    Stack_Top(stack, &elNow); //vlozeni prvku z vrcholu do promenne elNow
+    //prochazi zasobnik dokud nenarazi na oteviraci zavorku
     while(elNow != '('){
-        postfixExpression[*postfixExpressionLength] = elNow;
+        postfixExpression[*postfixExpressionLength] = elNow; //vlozeni prvku z vrcholu zasobniku do vysledneho postfixoveho vyrazu s pouzitim delky postfixoveho vyrazu
         (*postfixExpressionLength)++;
-        Stack_Pop(stack);
-        Stack_Top(stack, &elNow);
+        Stack_Pop(stack); //odstraneni prvku z vrcholu zasobniku
+        Stack_Top(stack, &elNow); //nacteni prvku ze zasobniku
     }
-    Stack_Pop(stack);
+    Stack_Pop(stack); //vymazani oteviraci zavoky
 }
 
 /**
@@ -83,25 +84,28 @@ void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpre
  * @param postfixExpressionLength Ukazatel na aktuální délku výsledného postfixového výrazu
  */
 void doOperation( Stack *stack, char c, char *postfixExpression, unsigned *postfixExpressionLength ) {
+    //kontrola prazdnosti zasobniku
     if(Stack_IsEmpty(stack)){
         Stack_Push(stack, c);
         return;
     }
-    char last;
-    Stack_Top(stack, &last);
+    char last; //deklarace veliciny pro vrchni prvek ze zasoprniku
+    Stack_Top(stack, &last); // nacteni vrchniho prvku
+    //vyrazeni moznosti oteviraci zavorky
     if(last == '('){
-        Stack_Push(stack, c);
+        Stack_Push(stack, c); //vlozeni oteviraci zavotky do zasobniku
         return;
     }
+    //podminka pro prvky s vetsi prioritou
     if ((last == '+' || last == '-') && (c == '*' || c == '/')){
-        Stack_Push(stack, c);
+        Stack_Push(stack, c); //vlozeni prvku s vetsi prioritou do zasobniku
         return;
     }
-    postfixExpression[*postfixExpressionLength] = last;
+    postfixExpression[*postfixExpressionLength] = last; //vlozeni prvku s mensi prioritou z vrcholu zasobniku do retezce postfixoveho vyrazu
     (*postfixExpressionLength)++;
-    Stack_Pop(stack);
+    Stack_Pop(stack); //vuymazani prvku
 
-    doOperation(stack, c, postfixExpression, postfixExpressionLength);
+    doOperation(stack, c, postfixExpression, postfixExpressionLength); //rekurzivni volani dokud prvek nebude mit vetsi prioritu nebo nebude prvek na vrcholu zavorka
 }
 
 /**
@@ -153,44 +157,49 @@ void doOperation( Stack *stack, char c, char *postfixExpression, unsigned *postf
  * @returns Znakový řetězec obsahující výsledný postfixový výraz
  */
 char *infix2postfix( const char *infixExpression ) {
-    Stack *stack = (Stack *)malloc(sizeof(Stack));
-    if(stack == NULL){
+    Stack *stack = (Stack *)malloc(sizeof(Stack)); //alokace zasobniku na odkarani operatoru
+    //kontrola alokace
+    if(stack == NULL) {
         return NULL;
     }
-    char *postfixExpression = (char *)malloc(sizeof(char)*MAX_LEN);
+    char *postfixExpression = (char *)malloc(sizeof(char)*MAX_LEN);//alokace znakoveho retezce pro postfixovy vyrazu
+    //kontrola alokace
     if(postfixExpression == NULL){
-
-        free(stack);
+        free(stack); //pri zpatne alokaci odstaneni zasobniku
         return NULL;
     }
+    //inicializace zasobniku
     Stack_Init(stack);
-    int i = 0;
-    unsigned int j = 0;
-    char item = infixExpression[i];
+    int i = 0; //promenna pro postupne vybirani znaku z pole
+    unsigned int j = 0; //promenna pro vkladani do pole po znaku
+    char item = infixExpression[i];//vlozeni prvniho znaku z pole
+    //prochazeni celeho pole dokud v nem bude znak
     while(item != '\0') {
+        //pokud je prvek z infixoveho vyrazu otevviraci zavorka
         if (item == '(') {
-            Stack_Push(stack, item);
-        } else if ((item >= '0' && item <= '9') || (item >= 'a' && item <= 'z') || (item >= 'A' && item <= 'Z')) {
-            postfixExpression[j] = item;
+            Stack_Push(stack, item); //vlozime znak do zasobniku
+        } else if ((item >= '0' && item <= '9') || (item >= 'a' && item <= 'z') || (item >= 'A' && item <= 'Z')) { //kdyz bude znak cislo male nebo velke pismeno
+            postfixExpression[j] = item;//vlozime znak do postfixove vyrazu
             j++;
-        } else if (item == '+' || item == '-' || item == '*' || item == '/') {
-            doOperation(stack, item, postfixExpression, &j);
-        } else if (item == ')') {
-            untilLeftPar(stack, postfixExpression, &j);
+        } else if (item == '+' || item == '-' || item == '*' || item == '/') { //pokud bude znak operator
+            doOperation(stack, item, postfixExpression, &j); //zavolame funkci pro vyhodnocovani operatoru a predame ji aktualni operator
+        } else if (item == ')') { //kdyz bude znak uzaviraci zavoka
+            untilLeftPar(stack, postfixExpression, &j); //zavolame fukci pro vyprazneni zasobniku pro oteviraci zavorku
         }
         i++;
-        item = infixExpression[i];
+        item = infixExpression[i]; //vlozime si dalsi znak v poradi do veliciny item
     }
+    //vypradneni zasobniku dokud nebude prazny
     while(!Stack_IsEmpty(stack)){
-        Stack_Top(stack, &postfixExpression[j]);
+        Stack_Top(stack, &postfixExpression[j]); //vlozeni prvku z vrcholu zasoniku do postfixoveho vyrazu
         j++;
-        Stack_Pop(stack);
+        Stack_Pop(stack); //vymazani prvku z vrcholu zasobniku
     }
-    postfixExpression[j] = '=';
+    postfixExpression[j] = '='; //vlozeni rovna se do postfixoveho vyrazu
     j++;
-    postfixExpression[j] = '\0';
-    free(stack);
-    return postfixExpression;
+    postfixExpression[j] = '\0'; //zakonceni postccixoveho vyrazu znakem \0
+    free(stack); //odstaneni zasobniku
+    return postfixExpression; //vraceni postfixoveho vyrazu
 }
 
 /* Konec c204.c */
